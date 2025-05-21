@@ -1,0 +1,117 @@
+-- Название БД: BankSystem
+
+-- 1. Таблица "Customer" (Клиенты)
+CREATE TABLE Customer (
+    customer_id INT PRIMARY KEY,
+    customer_first_name TEXT NOT NULL,
+	customer_last_name TEXT NOT NULL,
+    dob DATE NOT NULL,
+    mobile_no BIGINT NOT NULL
+);
+
+-- 2. Таблица "Account" (Счета клиентов)
+CREATE TABLE Account (
+    account_id INT PRIMARY KEY,
+    account_balance INT NOT NULL,
+    account_type TEXT NOT NULL,
+	customer_id INT NOT NULL,
+	FOREIGN KEY(customer_id) REFERENCES Customer(customer_id)
+);
+
+-- 3. Таблица "Monetary_Transactions" (Транзакции)
+CREATE TABLE Monetary_Transactions (
+    transaction_id SERIAL PRIMARY KEY,
+    transaction_type TEXT NOT NULL,
+    amount INT NOT NULL,
+    account_id INT,
+	lead_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(account_id) REFERENCES Account(account_id)
+);
+
+-- 4. Таблица "Loan" (Кредиты)
+CREATE TABLE Loan (
+    loan_id INT PRIMARY KEY,
+    issued_amount INT NOT NULL,
+    remaining_amount INT NOT NULL,
+    account_id INT,
+    FOREIGN KEY(account_id) REFERENCES Account(account_id)
+);
+
+-- 5. Таблица  "Loan Payment" (Платежи по кредитам)
+CREATE TABLE Loan_Payment (
+    loan_payment_id SERIAL PRIMARY KEY,
+    amount INT NOT NULL,
+    loan_id INT,
+	lead_time_payment TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(loan_id) REFERENCES Loan(loan_id)
+);
+
+----------------------
+-- 1. Вставка данных в таблицу "Customer"
+INSERT INTO Customer (customer_id, customer_first_name, customer_last_name, dob, mobile_no)
+VALUES 
+(201, 'Анна', 'Смирнова', '1985-06-15', 79991234567),
+(202, 'Дмитрий', ' Кузнецов', '1990-03-20', 79997654321),
+(203, 'Елена', ' Попова', '1995-11-05', 79993456789),
+(204, 'Инна', ' Игнатьева', '2001-11-05', 79563802768),
+(205, 'Герасим', ' Ярославов', '1963-10-18', 89701917841),
+(206, 'Кузьма', ' Никитин', '1988-01-08', 89174649238),
+(207, 'Марьяна', ' Голубова', '1978-01-08', 79296286779),
+(208, 'Зинаида', ' Тукай', '1983-07-05', 79166187251),
+(209, 'Федор', ' Яимов', '1993-10-12', 89149598374);
+
+-- 2. Вставка данных в таблицу "Account"
+INSERT INTO Account (account_id, account_balance, account_type, customer_id)
+VALUES 
+(1001, 150000, 'Сберегательный', 201),
+(1002, 250000, 'Текущий', 202),
+(1003, 100000, 'Сберегательный', 203),
+(1004, 200000, 'Сберегательный', 204),
+(1005, 300000, 'Сберегательный', 205),
+(1006, 50000, 'Сберегательный', 209),
+(1007, 120000, 'Сберегательный', 206),
+(1008, 300000, 'Сберегательный', 207),
+(1009, 800000, 'Сберегательный', 208),
+(1010, 255000, 'Текущий', 201),
+(1011, 80000, 'Текущий', 201),
+(1012, 200000, 'Текущий', 202),
+(1013, 100000, 'Текущий', 203),
+(1014, 150000, 'Текущий', 206),
+(1015, 160000, 'Текущий', 206),
+(1016, 150000, 'Текущий', 207),
+(1017, 250000, 'Текущий', 207),
+(1018, 500000, 'Текущий', 207),
+(1019, 70000, 'Текущий', 209),
+(1020, 180000, 'Текущий', 209);
+
+-- 3. Вставка данных в таблицу "Monetary_Transactions"
+INSERT INTO Monetary_Transactions (transaction_type, amount, account_id, lead_time)
+VALUES 
+('Дебет', 5000, 1001, '2025-01-14 15:20:00'),
+('Кредит', 20000, 1002,  '2025-02-14 15:20:00'),
+('Дебет', 3000, 1003,  '2025-03-14 15:20:00'),
+('Кредит', 50000, 1014,  '2025-03-14 15:20:00'),
+('Кредит', 10000, 1011,  '2025-03-20 15:20:00'),
+('Дебет', 5000, 1005,  '2025-04-01 15:20:00'),
+('Дебет', 2500, 1006,  '2025-04-01 15:20:00'),
+('Дебет', 1000, 1007,  '2025-04-01 15:20:00');
+
+-- 4. Вставка данных в таблицу "Loan"
+INSERT INTO Loan (loan_id, issued_amount, remaining_amount, account_id)
+VALUES 
+(401, 500000, 450000, 1001),
+(402, 300000, 250000, 1002),
+(403, 400000, 350000, 1003),
+(404, 600000, 600000, 1014),
+(405, 450000, 350000, 1017);
+
+-- 5. Вставка данных в таблицу "Loan Payment"
+INSERT INTO Loan_Payment (amount, loan_id)
+VALUES 
+(50000, 401),
+(50000, 402),
+(20000, 403),
+(15000, 403),
+(80000, 404),
+(35500, 405),
+(10890, 405);
